@@ -15,7 +15,7 @@ contract Token {
     event Approval(
         address indexed _owner,
         address indexed _spender,
-        uint256 _value
+        uint256 _value  
     );
 
     mapping(address => uint256) public balanceOf;

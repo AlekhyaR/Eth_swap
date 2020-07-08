@@ -12,6 +12,7 @@ class Navbar extends Component {
         >
           EthSwap
         </a>
+        <p>{this.props.account}</p>
       </nav>
     );
   }

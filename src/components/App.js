@@ -3,6 +3,7 @@ import Web3 from 'web3'
 import Navbar from './Navbar'
 import EthSwap from '../abis/EthSwap.json'
 import Token from '../abis/Token.json'
+import Main from './Main'
 import './App.css'
 
 class App extends Component {
@@ -44,7 +45,7 @@ class App extends Component {
     } else {
       window.alert('EthSwap contract is not deployed to detected network')
     }
-    
+    this.setState({loading: false})
 
   }
 
@@ -60,6 +61,18 @@ class App extends Component {
       window.alert('Non-Ethereum browser detected. You should consider trying MetaMask!')
     }
   }
+
+
+  buyTokens = (etherAmount) => {
+    this.setState({loading: true})
+    this.state.ethSwap.methods.buyTokens().send({value: etherAmount, from: this.state.account}).on('transactionHash', (hash) =>{
+      this.setState({loading: false})
+    })
+  }
+
+
+
+
   // call this function when react creates the components
   constructor(props) {
     super(props)
@@ -68,18 +81,29 @@ class App extends Component {
       token: {},
       tokenBalance: '0', // store token in state
       ethSwap: {},
-      ethBalance: '0'
+      ethBalance: '0',
+      loading: true
     } 
   }
 
   render() {
-    console.log(this.state.account)
+    let content
+    if(this.state.loading) {
+      content = <p id="loader" className="text-center"> Loading...</p>
+    } else {
+      content = <Main 
+        etherBalance={this.state.ethBalance}
+        tokenBalance={this.state.tokenBalance}
+        buyTokens={this.buyTokens}
+        />
+    }
+
     return (
       <div>
         <Navbar account={this.state.account}/>
         <div className="container-fluid mt-5">
           <div className="row">
-            <main role="main" className="col-lg-12 d-flex text-center">
+            <main role="main" className="col-lg-12 ml-auto mr-auto" style={{maxWidth: '600px'}}>
               <div className="content mr-auto ml-auto">
                 <a
                   href="http://www.dappuniversity.com/bootcamp"
@@ -87,7 +111,7 @@ class App extends Component {
                   rel="noopener noreferrer"
                 >
                 </a>
-                <h1>Hello, World!</h1>
+                {content}
               </div>
             </main>
           </div>
